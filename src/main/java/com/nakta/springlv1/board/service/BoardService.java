@@ -6,6 +6,7 @@ import com.nakta.springlv1.user.dto.StringResponseDto;
 import com.nakta.springlv1.board.entity.Board;
 import com.nakta.springlv1.user.jwt.JwtUtil;
 import com.nakta.springlv1.board.repository.BoardRepository;
+import com.nakta.springlv1.user.jwt.UserRoleEnum;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

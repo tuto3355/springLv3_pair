@@ -1,4 +1,7 @@
 package com.nakta.springlv1.comment.repository;
 
-public class CommentRepository {
+import com.nakta.springlv1.comment.entity.Comment;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CommentRepository extends JpaRepository<Comment, Long> {
 }

@@ -7,6 +7,7 @@ import com.nakta.springlv1.user.entity.User;
 import com.nakta.springlv1.user.errorcode.UserErrorCode;
 import com.nakta.springlv1.error.exception.CustomException;
 import com.nakta.springlv1.user.jwt.JwtUtil;
+import com.nakta.springlv1.user.jwt.UserRoleEnum;
 import com.nakta.springlv1.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +27,8 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
     }
+    // ADMIN_TOKEN
+    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     public StringResponseDto signup(SignupRequestDto requestDto) { //void리턴??
         String username = requestDto.getUsername();
@@ -35,7 +38,16 @@ public class UserService {
         if (tmpUser.isPresent()) {
             throw new CustomException(UserErrorCode.DUPLICATED_ID);
         }
-        User user = new User(username,password);
+
+        // 사용자 ROLE 확인
+        UserRoleEnum role = UserRoleEnum.USER; // 일반 사용자 권한 넣어줌
+        if (requestDto.isAdmin()) {
+            if (!ADMIN_TOKEN.equals(requestDto.getAdminToken())) {
+                throw new CustomException(UserErrorCode.ADMIN_NOT_FOUND);
+            }
+            role = UserRoleEnum.ADMIN; // 일치하면 ADMIN 권한으로 덮어씌움
+        }
+        User user = new User(username,password,role);
         userRepository.save(user);
         return new StringResponseDto( "새로운 아이디 저장 성공 ㅋㅋ");
 

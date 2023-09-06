@@ -1,9 +1,13 @@
 package com.nakta.springlv1.board.entity;
 
 import com.nakta.springlv1.board.dto.BoardRequestDto;
+import com.nakta.springlv1.comment.entity.Comment;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "board")
@@ -20,6 +24,9 @@ public class Board extends Timestamped {
     private String username;
     @Column(name = "content", nullable = false, length = 500)
     private String content;
+
+    @OneToMany(mappedBy = "board",cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Comment> commentList = new ArrayList<>();
 
     public Board(BoardRequestDto requestDto, String subject) {
         this.title = requestDto.getTitle();
