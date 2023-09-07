@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface BoardRepository extends JpaRepository<Board,Long> {
     public List<Board> findAllByOrderByModifiedAtDesc();
 
-    Optional<Board> findByUsername(String username);
+
 }
