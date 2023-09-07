@@ -1,5 +1,6 @@
 package com.nakta.springlv1.board.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nakta.springlv1.board.dto.BoardRequestDto;
 import com.nakta.springlv1.comment.entity.Comment;
 import jakarta.persistence.*;
@@ -27,6 +28,7 @@ public class Board extends Timestamped {
     @Column(name = "content", nullable = false, length = 500)
     private String content;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "board",cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Comment> commentList = new ArrayList<>();
     public List<Comment> getCommentList() {

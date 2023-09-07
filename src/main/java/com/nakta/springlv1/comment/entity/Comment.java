@@ -1,5 +1,6 @@
 package com.nakta.springlv1.comment.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.nakta.springlv1.board.entity.Board;
 import com.nakta.springlv1.comment.dto.CommentRequestDto;
 import jakarta.persistence.*;
@@ -25,6 +26,7 @@ public class Comment extends TimeStamped{
     @Column(name = "username", length = 500)
     private String username;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Board board;
@@ -34,8 +36,10 @@ public class Comment extends TimeStamped{
         this.board = board;
         this.username = subject;
     }
-
-    public void setBoard(Board board) {
+    public Comment(Board board){
+        this.board = board;
+    }
+    public void addBoardList(Board board) {
         this.board = board;
         board.getCommentList().add(this);
     }

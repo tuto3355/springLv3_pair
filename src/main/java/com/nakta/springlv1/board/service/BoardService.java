@@ -2,23 +2,28 @@ package com.nakta.springlv1.board.service;
 
 import com.nakta.springlv1.board.dto.BoardRequestDto;
 import com.nakta.springlv1.board.dto.BoardResponseDto;
+import com.nakta.springlv1.comment.entity.Comment;
+import com.nakta.springlv1.comment.repository.CommentRepository;
 import com.nakta.springlv1.user.dto.StringResponseDto;
 import com.nakta.springlv1.board.entity.Board;
 import com.nakta.springlv1.user.jwt.JwtUtil;
 import com.nakta.springlv1.board.repository.BoardRepository;
 import com.nakta.springlv1.user.jwt.UserRoleEnum;
 import io.jsonwebtoken.Claims;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
 
     public BoardResponseDto createBoard(BoardRequestDto requestDto, HttpServletRequest req) {
@@ -35,10 +40,15 @@ public class BoardService {
     public List<BoardResponseDto> getAllBoard() {
         return boardRepository.findAllByOrderByModifiedAtDesc().stream().map(BoardResponseDto::new).toList();
     }
-
     public BoardResponseDto getOneBoard(Long id) {
-        Board board = findById(id);
-        return new BoardResponseDto(board);
+        Optional<Board> optionalBoard = boardRepository.findById(id);
+        if (optionalBoard.isPresent()) {
+            Board board = optionalBoard.get();
+            List<Comment> comments = commentRepository.findByBoardIdOrderByCreatedAtDesc(board.getId());
+            return new BoardResponseDto(board);
+        } else {
+            throw new EntityNotFoundException("해당 게시글 조회 불가");
+        }
     }
 
     @Transactional
@@ -50,7 +60,8 @@ public class BoardService {
         //작성자 일치 확인
         Board board = findById(id);
         Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-        if (info.getSubject().equals(board.getUsername())) {
+        String authority = info.get("auth", String.class);
+        if (authority.equals("ADMIN")||info.getSubject().equals(board.getUsername())) {
             board.update(requestDto, info.getSubject());
             return new BoardResponseDto(board);
         } else {
@@ -62,11 +73,11 @@ public class BoardService {
 
         //토큰 검증
         String tokenValue = validateToken(req);
-
         //작성자 일치 확인
         Board board = findById(id);
         Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-        if (info.getSubject().equals(board.getUsername())) {
+        String authority = info.get("auth", String.class);
+        if (authority.equals("ADMIN")||info.getSubject().equals(board.getUsername())) {
             boardRepository.deleteById(id);
             return new StringResponseDto("삭제를 성공하였음");
         } else {
