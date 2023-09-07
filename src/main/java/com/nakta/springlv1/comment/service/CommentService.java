@@ -10,6 +10,7 @@ import com.nakta.springlv1.comment.repository.CommentRepository;
 import com.nakta.springlv1.error.exception.CustomException;
 import com.nakta.springlv1.user.dto.StringResponseDto;
 import com.nakta.springlv1.user.jwt.JwtUtil;
+import com.nakta.springlv1.user.jwt.UserRoleEnum;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,13 +24,15 @@ public class CommentService {
     private final JwtUtil jwtUtil;
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
+
     public CommentResponseDto createComment(CommentRequestDto requestDto, HttpServletRequest req) {
 
         //토큰 검증
-        validateToken(req);
+        String tokenValue = validateToken(req);
+        Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
         if (doesBoardExist(requestDto.getPostId())) {
             Board board = findBoard(requestDto.getPostId());// DB에 해당 username 있는지 확인
-            Comment comment = new Comment(requestDto,board);
+            Comment comment = new Comment(requestDto,board,info.getSubject());
 
             Comment saveComment = commentRepository.save(comment);
             CommentResponseDto commentResponseDto = new CommentResponseDto(saveComment);
@@ -44,47 +47,47 @@ public class CommentService {
 
 
     @Transactional
-    public CommentResponseDto modifyComment(Long id,Long id2,CommentRequestDto requestDto,HttpServletRequest req) {
+    public CommentResponseDto modifyComment(Long id,CommentRequestDto requestDto,HttpServletRequest req) {
        //토큰 검증
         String tokenValue = validateToken(req);
         Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
         String username = info.getSubject();
+        String authority = info.get("auth", String.class); // "auth" 클레임의 값을 가져옴
+
+
         //DB저장 유무
-        Board board = findBoard(id);
-        if(board.getUsername().equals(username)){
-            Comment comment = findComment(id2);
-            if (board.getId().equals(comment.getBoard().getId())) {
+        Comment comment = findComment(id);
+        if(authority.equals("ADMIN")||comment.getUsername().equals(username)){
+
                 comment.update(requestDto);
                 return new CommentResponseDto(comment);
             }else{
                 throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
-            }
-        }
-        else{
-            throw new IllegalArgumentException("작성자가 일치하지 않습니다");
         }
     }
 
-    public StringResponseDto deleteComment(Long id,Long id2, HttpServletRequest req) {
+
+
+    public StringResponseDto deleteComment(Long id, HttpServletRequest req) {
         //토큰 검증
         String tokenValue = validateToken(req);
         Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
         String username = info.getSubject();
-        Board board = findBoard(id); //DB저장 유무
+        String authority = info.get("auth", String.class); // "auth" 클레임의 값을 가져옴
 
-        if(board.getUsername().equals(username)){
-            Comment comment = findComment(id2);
-            if (board.getId().equals(comment.getBoard().getId())) {
-                commentRepository.delete(comment);
-                return new StringResponseDto("삭제를 성공하였음");
-            }else{
+        //DB저장 유무
+
+        Comment comment = findComment(id);
+        if(authority.equals("ADMIN")||comment.getUsername().equals(username)){
+
+            commentRepository.delete(comment);
+            return new StringResponseDto("삭제를 성공하였음");
+        }else{
                 throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
             }
-        }
-        else{
-            throw new IllegalArgumentException("작성자가 일치하지 않습니다");
-        }
     }
+
+
 
     private String validateToken(HttpServletRequest req) {
         String tokenValue = jwtUtil.getTokenFromRequest(req);

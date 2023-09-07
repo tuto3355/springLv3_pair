@@ -19,16 +19,20 @@ public class Comment extends TimeStamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "contents", nullable = false)
     private String contents;
+
+    @Column(name = "username", length = 500)
+    private String username;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Board board;
 
-    public Comment(CommentRequestDto requestDto,Board board){
+    public Comment(CommentRequestDto requestDto,Board board,String subject){
         this.contents = requestDto.getContents();
         this.board = board;
-        this.board.setId(requestDto.getPostId());
+        this.username = subject;
     }
 
     public void setBoard(Board board) {

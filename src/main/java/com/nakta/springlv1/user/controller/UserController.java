@@ -22,12 +22,12 @@ public class UserController {
 
 
     @PostMapping("/user/signup")
-    public ResponseEntity<StringResponseDto> signup( @RequestBody @Valid SignupRequestDto requestDto) {
+    public ResponseEntity<StringResponseDto> signup( @RequestBody  SignupRequestDto requestDto) {
         return ResponseEntity.ok(userService.signup(requestDto));
     }
 
     @PostMapping("/user/login")
-    public ResponseEntity<StringResponseDto> login(@RequestBody @Valid LoginRequestDto requestDto, HttpServletResponse res) {
+    public ResponseEntity<StringResponseDto> login(@RequestBody  LoginRequestDto requestDto, HttpServletResponse res) {
         return ResponseEntity.ok(userService.login(requestDto, res));
     }
 }

@@ -64,7 +64,7 @@ public class UserService {
         if (!passwordEncoder.matches(password,user.getPassword())) {
             throw new CustomException(UserErrorCode.PASSWORD_NOT_MATCH);
         }
-        String token = jwtUtil.createToken(user.getUsername());
+        String token = jwtUtil.createToken(user.getUsername(),user.getRole());
         jwtUtil.addJwtToCookie(token, res);
         return new StringResponseDto("로그인 성공 ㅋㅋ");
 
