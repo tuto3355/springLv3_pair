@@ -3,6 +3,7 @@ package com.nakta.springlv1.board.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nakta.springlv1.board.dto.BoardRequestDto;
 import com.nakta.springlv1.comment.entity.Comment;
+import com.nakta.springlv1.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,22 +29,25 @@ public class Board extends Timestamped {
     @Column(name = "content", nullable = false, length = 500)
     private String content;
 
-    @JsonManagedReference
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @OneToMany(mappedBy = "board",cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Comment> commentList = new ArrayList<>();
     public List<Comment> getCommentList() {
         return commentList;
     }
 
-    public Board(BoardRequestDto requestDto, String subject) {
+    public Board(BoardRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
-        this.username = subject;
+        this.username = user.getUsername();
         this.content = requestDto.getContent();
+        this.user = user;
     }
 
-    public void update(BoardRequestDto requestDto, String subject) {
+    public void update(BoardRequestDto requestDto) {
         this.title = requestDto.getTitle();
-        this.username = subject;
         this.content = requestDto.getContent();
     }
 }

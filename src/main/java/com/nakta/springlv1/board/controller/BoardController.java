@@ -30,7 +30,6 @@ public class BoardController {
     }
     @GetMapping("/board/{id}")
     public ResponseEntity<BoardResponseDto> getOneBoard(@PathVariable Long id) {
-
         return ResponseEntity.ok(boardService.getOneBoard(id));
     }
 
