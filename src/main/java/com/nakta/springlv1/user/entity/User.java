@@ -1,6 +1,7 @@
 package com.nakta.springlv1.user.entity;
 
 import com.nakta.springlv1.board.entity.Board;
+import com.nakta.springlv1.comment.entity.Comment;
 import com.nakta.springlv1.user.jwt.UserRoleEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
@@ -32,6 +33,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Board> boardList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> commentList = new ArrayList<>();
 
     public User(String username, String password, UserRoleEnum role) {
         this.username = username;
