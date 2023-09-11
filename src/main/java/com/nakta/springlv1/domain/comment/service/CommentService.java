@@ -8,6 +8,7 @@ import com.nakta.springlv1.domain.comment.entity.Comment;
 import com.nakta.springlv1.domain.comment.repository.CommentRepository;
 import com.nakta.springlv1.domain.user.dto.StringResponseDto;
 import com.nakta.springlv1.domain.user.jwt.JwtUtil;
+import com.nakta.springlv1.domain.user.jwt.UserRoleEnum;
 import com.nakta.springlv1.global.exception.CustomException;
 import com.nakta.springlv1.global.exception.ErrorCode;
 import com.nakta.springlv1.domain.user.entity.User;
@@ -26,36 +27,20 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
 
-    public CommentResponseDto createComment(CommentRequestDto requestDto, HttpServletRequest req) {
+    public CommentResponseDto createComment(CommentRequestDto requestDto, User user) {
 
-        //토큰 검증
-        String tokenValue = validateToken(req);
-        Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-        User user = userRepository.findByUsername(info.getSubject()).orElseThrow(() -> {
-            throw new CustomException(ErrorCode.ID_NOT_FOUND);
-        });
-
-        Board board = findBoard(requestDto.getPostId());// DB에 해당 username 있는지 확인
-        Comment comment = new Comment(requestDto, board, info.getSubject());
-        comment.setUser(user);
+        Board board = findBoard(requestDto.getPostId());
+        Comment comment = new Comment(requestDto, user, board);
 
         Comment saveComment = commentRepository.save(comment);
-        CommentResponseDto commentResponseDto = new CommentResponseDto(saveComment);
-        return commentResponseDto;
+        return new CommentResponseDto(saveComment);
     }
 
     @Transactional
-    public CommentResponseDto modifyComment(Long id, CommentRequestDto requestDto, HttpServletRequest req) {
-        //토큰 검증
-        String tokenValue = validateToken(req);
-        Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-        String username = info.getSubject();
-        String authority = info.get("auth", String.class); // "auth" 클레임의 값을 가져옴
+    public CommentResponseDto modifyComment(Long id, CommentRequestDto requestDto, User user) {
 
-        //DB저장 유무
         Comment comment = findComment(id);
-        if (authority.equals("ADMIN") || comment.getUsername().equals(username)) {
-
+        if (user.getRole()== UserRoleEnum.ADMIN || user.getUsername().equals(comment.getUsername())) {
             comment.update(requestDto);
             return new CommentResponseDto(comment);
         } else {
@@ -63,31 +48,15 @@ public class CommentService {
         }
     }
 
-    public StringResponseDto deleteComment(Long id, HttpServletRequest req) {
-        //토큰 검증
-        String tokenValue = validateToken(req);
-        Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-        String username = info.getSubject();
-        String authority = info.get("auth", String.class); // "auth" 클레임의 값을 가져옴
+    public StringResponseDto deleteComment(Long id, User user) {
 
-        //DB저장 유무
         Comment comment = findComment(id);
-        if (authority.equals("ADMIN") || comment.getUsername().equals(username)) {
-
+        if (user.getRole()== UserRoleEnum.ADMIN || user.getUsername().equals(comment.getUsername())) {
             commentRepository.delete(comment);
             return new StringResponseDto("삭제를 성공하였음");
         } else {
             throw new CustomException(ErrorCode.ID_NOT_MATCH);
         }
-    }
-
-    private String validateToken(HttpServletRequest req) {
-        String tokenValue = jwtUtil.getTokenFromRequest(req);
-        tokenValue = jwtUtil.substringToken(tokenValue);
-        if (!jwtUtil.validateToken(tokenValue)) {
-            throw new CustomException(ErrorCode.INVALID_TOKEN);
-        }
-        return tokenValue;
     }
 
     private Comment findComment(Long id2) {
