@@ -7,6 +7,7 @@ import com.nakta.springlv1.domain.board.entity.Board;
 import com.nakta.springlv1.domain.board.repository.BoardRepository;
 import com.nakta.springlv1.domain.user.dto.StringResponseDto;
 import com.nakta.springlv1.domain.user.jwt.JwtUtil;
+import com.nakta.springlv1.domain.user.jwt.UserRoleEnum;
 import com.nakta.springlv1.global.exception.CustomException;
 import com.nakta.springlv1.global.exception.ErrorCode;
 import com.nakta.springlv1.domain.user.entity.User;
@@ -27,16 +28,7 @@ public class BoardService {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
-    public BoardResponseDto createBoard(BoardRequestDto requestDto, HttpServletRequest req) {
-
-        //토큰 검증
-        String tokenValue = validateToken(req);
-        Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-
-        User user = userRepository.findByUsername(info.getSubject()).orElseThrow(() -> {
-            throw new CustomException(ErrorCode.ID_NOT_FOUND);
-        });
-
+    public BoardResponseDto createBoard(BoardRequestDto requestDto, User user) {
         Board board = new Board(requestDto, user); //username을 따로 받기 위한 생성자 생성
         Board newboard = boardRepository.save(board);
         return new BoardResponseDto(newboard);
@@ -51,17 +43,11 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardResponseDto modifyBoard(Long id, BoardRequestDto requestDto, HttpServletRequest req) {
+    public BoardResponseDto modifyBoard(Long id, BoardRequestDto requestDto, User user) {
 
-        //토큰 검증
-        String tokenValue = validateToken(req);
-
-        //작성자 일치 확인
         Board board = findById(id);
-        Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-        String authority = info.get("auth", String.class);
 
-        if (authority.equals("ADMIN")||info.getSubject().equals(board.getUsername())) {
+        if (user.getRole()== UserRoleEnum.ADMIN||user.getUsername().equals(board.getUsername())) {
             board.update(requestDto);
             return new BoardResponseDto(board);
         } else {
@@ -69,16 +55,11 @@ public class BoardService {
         }
     }
 
-    public StringResponseDto deleteBoard(Long id, HttpServletRequest req) {
+    public StringResponseDto deleteBoard(Long id, User user) {
 
-        //토큰 검증
-        String tokenValue = validateToken(req);
-        //작성자 일치 확인
         Board board = findById(id);
-        Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-        String authority = info.get("auth", String.class);
 
-        if (authority.equals("ADMIN")||info.getSubject().equals(board.getUsername())) {
+        if (user.getRole()== UserRoleEnum.ADMIN||user.getUsername().equals(board.getUsername())) {
             boardRepository.deleteById(id);
             return new StringResponseDto("삭제를 성공하였음");
         } else {
@@ -91,12 +72,4 @@ public class BoardService {
         return boardRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
     }
 
-    private String validateToken(HttpServletRequest req) {
-        String tokenValue = jwtUtil.getTokenFromRequest(req);
-        tokenValue = jwtUtil.substringToken(tokenValue);
-        if (!jwtUtil.validateToken(tokenValue)) {
-            throw new CustomException(ErrorCode.INVALID_TOKEN);
-        }
-        return tokenValue;
-    }
 }

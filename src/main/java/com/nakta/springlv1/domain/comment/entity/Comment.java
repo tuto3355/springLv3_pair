@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Getter
 
 @NoArgsConstructor //지우기
-public class Comment extends TimeStamped{
+public class Comment extends TimeStamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,11 +35,11 @@ public class Comment extends TimeStamped{
     private User user;
 
 
-    public Comment(CommentRequestDto requestDto,Board board,String subject){
+    public Comment(CommentRequestDto requestDto, User user, Board board) {
         this.contents = requestDto.getContents();
+        this.username = user.getUsername();
+        this.user = user;
         this.board = board;
-        this.username = subject;
-
     }
 
     public void update(CommentRequestDto requestDto) {
