@@ -1,7 +1,6 @@
 package com.nakta.springlv1.domain.board.entity;
 
 import com.nakta.springlv1.domain.board.dto.BoardRequestDto;
-import com.nakta.springlv1.domain.comment.entity.Comment;
 import com.nakta.springlv1.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,7 +16,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 
-public class Board extends Timestamped {
+public class Board extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;

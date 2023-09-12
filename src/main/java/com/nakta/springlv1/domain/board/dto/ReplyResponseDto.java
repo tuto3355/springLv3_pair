@@ -1,6 +1,6 @@
-package com.nakta.springlv1.domain.comment.dto;
+package com.nakta.springlv1.domain.board.dto;
 
-import com.nakta.springlv1.domain.comment.entity.Reply;
+import com.nakta.springlv1.domain.board.entity.Reply;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

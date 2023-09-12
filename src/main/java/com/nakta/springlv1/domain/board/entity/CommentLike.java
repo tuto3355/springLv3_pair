@@ -1,4 +1,4 @@
-package com.nakta.springlv1.domain.comment.entity;
+package com.nakta.springlv1.domain.board.entity;
 
 import com.nakta.springlv1.domain.user.entity.User;
 import jakarta.persistence.*;

@@ -1,13 +1,13 @@
-package com.nakta.springlv1.domain.comment.service;
+package com.nakta.springlv1.domain.board.service;
 
 import com.nakta.springlv1.domain.board.entity.Board;
 import com.nakta.springlv1.domain.board.repository.BoardRepository;
-import com.nakta.springlv1.domain.comment.dto.ReplyRequestDto;
-import com.nakta.springlv1.domain.comment.dto.ReplyResponseDto;
-import com.nakta.springlv1.domain.comment.entity.Comment;
-import com.nakta.springlv1.domain.comment.entity.Reply;
-import com.nakta.springlv1.domain.comment.repository.CommentRepository;
-import com.nakta.springlv1.domain.comment.repository.ReplyRepository;
+import com.nakta.springlv1.domain.board.dto.ReplyRequestDto;
+import com.nakta.springlv1.domain.board.dto.ReplyResponseDto;
+import com.nakta.springlv1.domain.board.entity.Comment;
+import com.nakta.springlv1.domain.board.entity.Reply;
+import com.nakta.springlv1.domain.board.repository.CommentRepository;
+import com.nakta.springlv1.domain.board.repository.ReplyRepository;
 import com.nakta.springlv1.domain.user.dto.StringResponseDto;
 import com.nakta.springlv1.domain.user.entity.User;
 import com.nakta.springlv1.domain.user.jwt.UserRoleEnum;

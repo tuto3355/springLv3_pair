@@ -1,11 +1,10 @@
-package com.nakta.springlv1.domain.comment.controller;
+package com.nakta.springlv1.domain.board.controller;
 
-import com.nakta.springlv1.domain.comment.dto.CommentRequestDto;
-import com.nakta.springlv1.domain.comment.dto.CommentResponseDto;
-import com.nakta.springlv1.domain.comment.service.CommentService;
+import com.nakta.springlv1.domain.board.dto.CommentRequestDto;
+import com.nakta.springlv1.domain.board.dto.CommentResponseDto;
+import com.nakta.springlv1.domain.board.service.CommentService;
 import com.nakta.springlv1.domain.user.dto.StringResponseDto;
 import com.nakta.springlv1.global.security.UserDetailsImpl;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

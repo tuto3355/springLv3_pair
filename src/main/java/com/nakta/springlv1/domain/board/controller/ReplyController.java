@@ -1,10 +1,8 @@
-package com.nakta.springlv1.domain.comment.controller;
+package com.nakta.springlv1.domain.board.controller;
 
-import com.nakta.springlv1.domain.comment.dto.CommentRequestDto;
-import com.nakta.springlv1.domain.comment.dto.CommentResponseDto;
-import com.nakta.springlv1.domain.comment.dto.ReplyRequestDto;
-import com.nakta.springlv1.domain.comment.dto.ReplyResponseDto;
-import com.nakta.springlv1.domain.comment.service.ReplyService;
+import com.nakta.springlv1.domain.board.dto.ReplyRequestDto;
+import com.nakta.springlv1.domain.board.dto.ReplyResponseDto;
+import com.nakta.springlv1.domain.board.service.ReplyService;
 import com.nakta.springlv1.domain.user.dto.StringResponseDto;
 import com.nakta.springlv1.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
