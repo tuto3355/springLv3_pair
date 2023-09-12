@@ -32,11 +32,11 @@ public class Board extends Timestamped {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "board",cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
-    public List<Comment> getCommentList() {
-        return commentList;
-    }
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<BoardLike> boardLikeList = new ArrayList<>();
 
     public Board(BoardRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();

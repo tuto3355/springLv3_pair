@@ -1,5 +1,7 @@
 package com.nakta.springlv1.global.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nakta.springlv1.domain.user.dto.StringResponseDto;
 import com.nakta.springlv1.domain.user.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -40,6 +42,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             if (!jwtUtil.validateToken(tokenValue)) {
                 log.error("Token Error");
+
+                res.setContentType("application/json");
+                res.setCharacterEncoding("utf-8");
+                ObjectMapper objectMapper = new ObjectMapper();
+                String result = objectMapper.writeValueAsString(new StringResponseDto("토큰 검증 오류 ㅋㅋㅋ"));
+                res.getWriter().write(result);
+                res.setStatus(400);
+
                 return;
             }
 
@@ -49,6 +59,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 setAuthentication(info.getSubject());
             } catch (Exception e) {
                 log.error(e.getMessage());
+
+                res.setContentType("application/json");
+                res.setCharacterEncoding("utf-8");
+                ObjectMapper objectMapper = new ObjectMapper();
+                String result = objectMapper.writeValueAsString(new StringResponseDto("토큰 인증 오류 ㅋㅋㅋ"));
+                res.getWriter().write(result);
+                res.setStatus(400);
+
                 return;
             }
         }
