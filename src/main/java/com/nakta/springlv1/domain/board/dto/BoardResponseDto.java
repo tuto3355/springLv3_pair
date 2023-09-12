@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 public class BoardResponseDto {
     private Long id;
+    private String category;
     private String title;
     private String username;
     private String content;
@@ -20,6 +21,7 @@ public class BoardResponseDto {
 
     public BoardResponseDto(Board board) {
         this.id = board.getId();
+        this.category = board.getCategory().getTitle();
         this.title = board.getTitle();
         this.username = board.getUsername();
         this.content = board.getContent();

@@ -2,6 +2,7 @@ package com.nakta.springlv1.domain.board.service;
 
 import com.nakta.springlv1.domain.board.dto.BoardRequestDto;
 import com.nakta.springlv1.domain.board.dto.BoardResponseDto;
+import com.nakta.springlv1.domain.board.entity.BoardCategory;
 import com.nakta.springlv1.domain.board.entity.BoardLike;
 import com.nakta.springlv1.domain.board.repository.BoardLikeRepository;
 import com.nakta.springlv1.domain.board.entity.Board;

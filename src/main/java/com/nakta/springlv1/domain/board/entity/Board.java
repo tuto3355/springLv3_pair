@@ -20,10 +20,17 @@ public class Board extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
+
+    @Column(name = "category", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private BoardCategory category;
+
     @Column(name = "title", nullable = false, length = 500)
     private String title;
+
     @Column(name = "username", length = 500)
     private String username;
+
     @Column(name = "content", nullable = false, length = 500)
     private String content;
 
@@ -38,6 +45,7 @@ public class Board extends TimeStamped {
     private List<BoardLike> boardLikeList = new ArrayList<>();
 
     public Board(BoardRequestDto requestDto, User user) {
+        this.category = requestDto.getBoardCategory();
         this.title = requestDto.getTitle();
         this.username = user.getUsername();
         this.content = requestDto.getContent();
