@@ -7,6 +7,7 @@ import com.nakta.springlv1.domain.board.service.BoardService;
 import com.nakta.springlv1.global.security.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +28,12 @@ public class BoardController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<BoardResponseDto>> getAllBoard() {
-        return ResponseEntity.ok(boardService.getAllBoard());
+    public ResponseEntity<Page<BoardResponseDto>> getAllBoard(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestParam("sortBy") String sortBy,
+            @RequestParam("isAsc") boolean isAsc) {
+        return ResponseEntity.ok(boardService.getAllBoard(page-1,size,sortBy,isAsc));
     }
 
     @GetMapping("/{id}")
