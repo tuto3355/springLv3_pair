@@ -53,6 +53,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String token = jwtUtil.createToken(username, role);
         jwtUtil.addJwtToCookie(token, response);
+
+        //메세지?
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String result = objectMapper.writeValueAsString(new StringResponseDto("로그인 성공 ㅋㅋㅋ"));
+        response.getWriter().write(result);
+
+        response.setStatus(200);
     }
 
     @Override
@@ -67,6 +78,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String result = objectMapper.writeValueAsString(new StringResponseDto("로그인 실패 ㅋㅋㅋ"));
         response.getWriter().write(result);
 
-        response.setStatus(401);
+        response.setStatus(400);
     }
 }

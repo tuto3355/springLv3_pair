@@ -5,10 +5,15 @@ import com.nakta.springlv1.domain.user.dto.SignupRequestDto;
 import com.nakta.springlv1.domain.user.dto.StringResponseDto;
 import com.nakta.springlv1.domain.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -24,8 +29,9 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/signup")
-    public ResponseEntity<StringResponseDto> signup(@RequestBody SignupRequestDto requestDto) {
-        return ResponseEntity.ok(userService.signup(requestDto));
+    public ResponseEntity<StringResponseDto> signup(@RequestBody @Valid SignupRequestDto requestDto,
+                                                    BindingResult result) {
+        return userService.signup(requestDto, result);
     }
 
 }

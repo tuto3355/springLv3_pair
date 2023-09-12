@@ -10,9 +10,13 @@ import com.nakta.springlv1.domain.user.repository.UserRepository;
 import com.nakta.springlv1.global.exception.ErrorCode;
 import com.nakta.springlv1.global.exception.CustomException;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,7 +34,17 @@ public class UserService {
     // ADMIN_TOKEN
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
-    public StringResponseDto signup(SignupRequestDto requestDto) { //void리턴??
+    public ResponseEntity<StringResponseDto> signup(SignupRequestDto requestDto, BindingResult result) { //void리턴??
+
+        if (result.hasErrors()) {
+            String tmp = "";
+            List<FieldError> list = result.getFieldErrors();
+            for(FieldError error : list) {
+                tmp = tmp + error.getDefaultMessage()+'\n';
+            }
+            return ResponseEntity.status(400).body(new StringResponseDto(tmp));
+        }
+
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
 
@@ -49,7 +63,7 @@ public class UserService {
         }
         User user = new User(username,password,role);
         userRepository.save(user);
-        return new StringResponseDto( "새로운 아이디 저장 성공 ㅋㅋ");
+        return ResponseEntity.ok(new StringResponseDto( "새로운 아이디 저장 성공 ㅋㅋ"));
 
     }
 
