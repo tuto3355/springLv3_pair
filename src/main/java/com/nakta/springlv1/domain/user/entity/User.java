@@ -4,6 +4,7 @@ import com.nakta.springlv1.domain.board.entity.Board;
 import com.nakta.springlv1.domain.board.entity.BoardLike;
 import com.nakta.springlv1.domain.comment.entity.Comment;
 import com.nakta.springlv1.domain.comment.entity.CommentLike;
+import com.nakta.springlv1.domain.comment.entity.Reply;
 import com.nakta.springlv1.domain.user.jwt.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -36,6 +37,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Reply> replyList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<BoardLike> boardLikeList = new ArrayList<>();
