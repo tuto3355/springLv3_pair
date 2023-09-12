@@ -6,6 +6,7 @@ import com.nakta.springlv1.domain.user.dto.StringResponseDto;
 import com.nakta.springlv1.domain.user.dto.UserDeleteRequestDto;
 import com.nakta.springlv1.domain.user.service.UserService;
 import com.nakta.springlv1.global.security.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@Tag(name="회원 controller(swagger test)")
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
