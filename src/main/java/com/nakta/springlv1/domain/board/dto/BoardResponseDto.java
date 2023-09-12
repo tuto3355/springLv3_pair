@@ -14,6 +14,7 @@ public class BoardResponseDto {
     private String title;
     private String username;
     private String content;
+    private int likes;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private List<CommentResponseDto> commentList;
@@ -23,6 +24,7 @@ public class BoardResponseDto {
         this.title = board.getTitle();
         this.username = board.getUsername();
         this.content = board.getContent();
+        this.likes = board.getBoardLikeList().size();
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
         this.commentList = board.getCommentList().stream().map(CommentResponseDto::new)

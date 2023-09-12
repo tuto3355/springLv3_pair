@@ -2,6 +2,8 @@ package com.nakta.springlv1.domain.board.service;
 
 import com.nakta.springlv1.domain.board.dto.BoardRequestDto;
 import com.nakta.springlv1.domain.board.dto.BoardResponseDto;
+import com.nakta.springlv1.domain.board.entity.BoardLike;
+import com.nakta.springlv1.domain.board.repository.BoardLikeRepository;
 import com.nakta.springlv1.domain.comment.repository.CommentRepository;
 import com.nakta.springlv1.domain.board.entity.Board;
 import com.nakta.springlv1.domain.board.repository.BoardRepository;
@@ -19,14 +21,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
-    private final CommentRepository commentRepository;
-    private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
+    private final BoardLikeRepository boardLikeRepository;
 
     public BoardResponseDto createBoard(BoardRequestDto requestDto, User user) {
         Board board = new Board(requestDto, user); //username을 따로 받기 위한 생성자 생성
@@ -65,11 +66,24 @@ public class BoardService {
         } else {
             throw new CustomException(ErrorCode.ID_NOT_MATCH);
         }
+    }
 
+    @Transactional
+    public StringResponseDto likeBoard(Long id, User user) {
+        Board board = findById(id);
+        Optional<BoardLike> boardLike = boardLikeRepository.findByUserAndBoard(user, board);
+        if (boardLike.isPresent()) {
+            boardLikeRepository.deleteByUserAndBoard(user, board);
+            return new StringResponseDto("좋아요 취소 성공!!");
+        } else {
+            boardLikeRepository.save(new BoardLike(user, board));
+            return new StringResponseDto("좋아요 성공!!");
+        }
     }
 
     private Board findById(Long id) {
         return boardRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
     }
+
 
 }

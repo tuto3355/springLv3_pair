@@ -30,6 +30,7 @@ public class BoardController {
     public ResponseEntity<List<BoardResponseDto>> getAllBoard() {
         return ResponseEntity.ok(boardService.getAllBoard());
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<BoardResponseDto> getOneBoard(@PathVariable Long id) {
         return ResponseEntity.ok(boardService.getOneBoard(id));
@@ -45,6 +46,12 @@ public class BoardController {
     public ResponseEntity<StringResponseDto> deleteBoard(@PathVariable Long id,
                                                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(boardService.deleteBoard(id, userDetails.getUser()));
+    }
+
+    @GetMapping("/{id}/like")
+    public ResponseEntity<StringResponseDto> likeBoard(@PathVariable Long id,
+                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(boardService.likeBoard(id, userDetails.getUser()));
     }
 
 }
