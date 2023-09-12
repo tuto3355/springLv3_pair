@@ -8,4 +8,4 @@ https://docs.google.com/spreadsheets/d/1n3K_5F_KZ5-cagrUK-n9d0RzcpDdlLpxOZafy0ds
 
 
 ## ERD
-![image](https://github.com/tuto3355/springLv3_pair/assets/130144714/b8eba630-0974-4f54-9ec7-ca5b3b44ff8b)
+![image](https://github.com/tuto3355/springLv3_pair/assets/130144714/d2beeeb2-df9b-4668-a108-19cffa911dcb)
