@@ -3,6 +3,7 @@ package com.nakta.springlv1.domain.user.entity;
 import com.nakta.springlv1.domain.board.entity.Board;
 import com.nakta.springlv1.domain.board.entity.BoardLike;
 import com.nakta.springlv1.domain.comment.entity.Comment;
+import com.nakta.springlv1.domain.comment.entity.CommentLike;
 import com.nakta.springlv1.domain.user.jwt.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -38,6 +39,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<BoardLike> boardLikeList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<CommentLike> commentLikeList = new ArrayList<>();
 
     public User(String username, String password, UserRoleEnum role) {
         this.username = username;

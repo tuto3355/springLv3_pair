@@ -6,20 +6,22 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 @Getter
 public class CommentResponseDto {
-    Long id;
-    Long postId;
-    String contents;
+    private Long id;
+    private Long postId;
+    private String contents;
+    private int likes;
     private LocalDateTime modifiedAt; // 게시글 수정 날짜
-    private LocalDateTime createAt; // 게시글 생성 날짜
+    private LocalDateTime createdAt; // 게시글 생성 날짜
     private String username;
 
     public CommentResponseDto(Comment comment) {
         this.id = comment.getId();
-        this.contents = comment.getContents();
-        this.modifiedAt = comment.getModifiedAt();
-        this.createAt = comment.getCreatedAt();
-        this.username = comment.getUsername();
         this.postId = comment.getBoard().getId();
+        this.username = comment.getUsername();
+        this.contents = comment.getContents();
+        this.likes = comment.getCommentLikeList().size();
+        this.modifiedAt = comment.getModifiedAt();
+        this.createdAt = comment.getCreatedAt();
     }
 }
 

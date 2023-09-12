@@ -5,6 +5,8 @@ import com.nakta.springlv1.domain.board.repository.BoardRepository;
 import com.nakta.springlv1.domain.comment.dto.CommentRequestDto;
 import com.nakta.springlv1.domain.comment.dto.CommentResponseDto;
 import com.nakta.springlv1.domain.comment.entity.Comment;
+import com.nakta.springlv1.domain.comment.entity.CommentLike;
+import com.nakta.springlv1.domain.comment.repository.CommentLikeRepository;
 import com.nakta.springlv1.domain.comment.repository.CommentRepository;
 import com.nakta.springlv1.domain.user.dto.StringResponseDto;
 import com.nakta.springlv1.domain.user.jwt.JwtUtil;
@@ -19,13 +21,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
     private final JwtUtil jwtUtil;
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
+    private final CommentLikeRepository commentLikeRepository;
 
     public CommentResponseDto createComment(CommentRequestDto requestDto, User user) {
 
@@ -59,8 +63,22 @@ public class CommentService {
         }
     }
 
-    private Comment findComment(Long id2) {
-        return commentRepository.findById(id2).orElseThrow(() ->
+    @Transactional
+    public StringResponseDto likeBoard(Long id, User user) {
+        Comment comment = findComment(id);
+        Optional<CommentLike> commentLike = commentLikeRepository.findByUserAndComment(user, comment);
+        if (commentLike.isPresent()) {
+            commentLikeRepository.deleteByUserAndComment(user, comment);
+            return new StringResponseDto("좋아요 취소 성공!!");
+        } else {
+            commentLikeRepository.save(new CommentLike(user, comment));
+            return new StringResponseDto("좋아요 성공!!");
+        }
+
+    }
+
+    private Comment findComment(Long id) {
+        return commentRepository.findById(id).orElseThrow(() ->
                 new CustomException(ErrorCode.COMMENT_NOT_FOUND)
         );
     }
@@ -70,4 +88,6 @@ public class CommentService {
                 new CustomException(ErrorCode.POST_NOT_FOUND)
         );
     }
+
+
 }

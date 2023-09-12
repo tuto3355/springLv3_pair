@@ -33,4 +33,10 @@ public class CommentController {
     public ResponseEntity<StringResponseDto> deleteComment(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(commentService.deleteComment(id, userDetails.getUser()));
     }
+
+    @GetMapping("/{id}/like")
+    public ResponseEntity<StringResponseDto> likeComment(@PathVariable Long id,
+                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(commentService.likeBoard(id, userDetails.getUser()));
+    }
 }
