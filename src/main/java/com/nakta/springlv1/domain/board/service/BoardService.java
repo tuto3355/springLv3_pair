@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,6 +46,11 @@ public class BoardService {
 
         return boardList.map(BoardResponseDto::new);
     }
+
+    public List<BoardResponseDto> getBoardByCategory(BoardCategory category) {
+        return boardRepository.findAllByCategory(category).stream().map(BoardResponseDto::new).toList();
+    }
+
     public BoardResponseDto getOneBoard(Long id) {
         Board board = findById(id);
         return new BoardResponseDto(board);
@@ -91,6 +97,7 @@ public class BoardService {
     private Board findById(Long id) {
         return boardRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
     }
+
 
 
 }
