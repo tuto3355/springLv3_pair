@@ -3,6 +3,7 @@ package com.nakta.springlv1.global.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nakta.springlv1.domain.user.dto.StringResponseDto;
 import com.nakta.springlv1.domain.user.jwt.JwtUtil;
+import com.nakta.springlv1.domain.user.jwt.UserRoleEnum;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -33,14 +34,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
-        String tokenValue = jwtUtil.getTokenFromRequest(req);
-
-        if (StringUtils.hasText(tokenValue)) {
+        String accessTokenValue = jwtUtil.getTokenFromRequest(req,"Authorization");
+        if (StringUtils.hasText(accessTokenValue)) {
             // JWT 토큰 substring
-            tokenValue = jwtUtil.substringToken(tokenValue);
-            log.info(tokenValue);
+            accessTokenValue = jwtUtil.substringToken(accessTokenValue);
+            log.info(accessTokenValue);
 
-            if (!jwtUtil.validateToken(tokenValue)) {
+            if (!jwtUtil.validateToken(accessTokenValue)) {
+                if (validateRefreshToken(req, res)) {
+                    return;
+                }
                 log.error("Token Error");
 
                 res.setContentType("application/json");
@@ -53,13 +56,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+            Claims info = jwtUtil.getUserInfoFromToken(accessTokenValue);
 
             try {
                 setAuthentication(info.getSubject());
             } catch (Exception e) {
                 log.error(e.getMessage());
 
+                //메세지
                 res.setContentType("application/json");
                 res.setCharacterEncoding("utf-8");
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -69,9 +73,37 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
                 return;
             }
+        } else {
+            if (validateRefreshToken(req, res)) {
+                return;
+            }
         }
 
         filterChain.doFilter(req, res);
+    }
+
+    public boolean validateRefreshToken(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
+        String refreshTokenValue = jwtUtil.getTokenFromRequest(req,"AuthorizationR");
+        if (StringUtils.hasText(refreshTokenValue)) {
+            refreshTokenValue = jwtUtil.substringToken(refreshTokenValue);
+            log.info(refreshTokenValue);
+            if (jwtUtil.validateToken(refreshTokenValue)) {
+                Claims info = jwtUtil.getUserInfoFromToken(refreshTokenValue);
+                String username = info.getSubject();
+                String authority = info.get("auth", String.class);
+                UserRoleEnum role;
+                if (authority.equals("ADMIN")) {
+                    role = UserRoleEnum.ADMIN;
+                } else {
+                    role = UserRoleEnum.USER;
+                }
+
+                String accessToken = jwtUtil.createToken(username, role,1);
+                jwtUtil.addJwtToCookie(accessToken, res, "Authorization");
+                return true;
+            }
+        }
+        return false;
     }
 
     // 인증 처리

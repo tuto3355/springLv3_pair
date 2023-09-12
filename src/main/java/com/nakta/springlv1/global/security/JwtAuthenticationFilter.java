@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -51,8 +50,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
         UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
 
-        String token = jwtUtil.createToken(username, role);
-        jwtUtil.addJwtToCookie(token, response);
+        String accessToken = jwtUtil.createToken(username, role,1);
+        String refreshToken = jwtUtil.createToken(username, role,24*7);
+        jwtUtil.addJwtToCookie(accessToken, response, "Authorization");
+        jwtUtil.addJwtToCookie(refreshToken, response, "AuthorizationR");
 
         //메세지?
         response.setContentType("application/json");
