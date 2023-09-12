@@ -1,7 +1,7 @@
-package com.nakta.springlv1.domain.comment.repository;
+package com.nakta.springlv1.domain.board.repository;
 
-import com.nakta.springlv1.domain.comment.entity.Comment;
-import com.nakta.springlv1.domain.comment.entity.CommentLike;
+import com.nakta.springlv1.domain.board.entity.Comment;
+import com.nakta.springlv1.domain.board.entity.CommentLike;
 import com.nakta.springlv1.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -59,7 +59,19 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 패키지 접근 허용 설정
-                        .requestMatchers("/api/user/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
+                        .requestMatchers(
+                                "/api/user/**",
+                                "/error",
+                                "/v2/api-docs",
+                                "/swagger-resources",
+                                "/swagger-resources/**",
+                                "/configuration/ui",
+                                "/configuration/security",
+                                "/swagger-ui.html",
+                                "/webjars/**",
+                                /* swagger v3 */
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
                         .anyRequest().authenticated()
 
         );

@@ -4,23 +4,21 @@ import com.nakta.springlv1.domain.board.dto.BoardRequestDto;
 import com.nakta.springlv1.domain.board.dto.BoardResponseDto;
 import com.nakta.springlv1.domain.board.entity.BoardLike;
 import com.nakta.springlv1.domain.board.repository.BoardLikeRepository;
-import com.nakta.springlv1.domain.comment.repository.CommentRepository;
 import com.nakta.springlv1.domain.board.entity.Board;
 import com.nakta.springlv1.domain.board.repository.BoardRepository;
 import com.nakta.springlv1.domain.user.dto.StringResponseDto;
-import com.nakta.springlv1.domain.user.jwt.JwtUtil;
 import com.nakta.springlv1.domain.user.jwt.UserRoleEnum;
 import com.nakta.springlv1.global.exception.CustomException;
 import com.nakta.springlv1.global.exception.ErrorCode;
 import com.nakta.springlv1.domain.user.entity.User;
-import com.nakta.springlv1.domain.user.repository.UserRepository;
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,8 +33,16 @@ public class BoardService {
         return new BoardResponseDto(newboard);
     }
 
-    public List<BoardResponseDto> getAllBoard() {
-        return boardRepository.findAllByOrderByModifiedAtDesc().stream().map(BoardResponseDto::new).toList();
+    @Transactional(readOnly = true)
+    public Page<BoardResponseDto> getAllBoard(int page, int size, String sortBy, boolean isAsc) {
+
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Board> boardList = boardRepository.findAll(pageable);
+
+        return boardList.map(BoardResponseDto::new);
     }
     public BoardResponseDto getOneBoard(Long id) {
         Board board = findById(id);

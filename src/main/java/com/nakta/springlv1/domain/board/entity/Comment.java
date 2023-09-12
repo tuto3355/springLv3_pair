@@ -1,8 +1,6 @@
-package com.nakta.springlv1.domain.comment.entity;
+package com.nakta.springlv1.domain.board.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.nakta.springlv1.domain.board.entity.Board;
-import com.nakta.springlv1.domain.comment.dto.CommentRequestDto;
+import com.nakta.springlv1.domain.board.dto.CommentRequestDto;
 import com.nakta.springlv1.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -34,6 +32,9 @@ public class Comment extends TimeStamped {
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Board board;
+
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
+    private List<Reply> replyList = new ArrayList<>();
 
     @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
     private List<CommentLike> commentLikeList = new ArrayList<>();
