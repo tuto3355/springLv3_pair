@@ -2,8 +2,7 @@ package com.nakta.springlv1.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nakta.springlv1.domain.user.dto.StringResponseDto;
-import com.nakta.springlv1.domain.user.jwt.JwtUtil;
-import com.nakta.springlv1.domain.user.jwt.UserRoleEnum;
+import com.nakta.springlv1.domain.user.entity.UserRoleEnum;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

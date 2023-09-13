@@ -5,7 +5,6 @@ import com.nakta.springlv1.domain.board.entity.BoardLike;
 import com.nakta.springlv1.domain.board.entity.Comment;
 import com.nakta.springlv1.domain.board.entity.CommentLike;
 import com.nakta.springlv1.domain.board.entity.Reply;
-import com.nakta.springlv1.domain.user.jwt.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

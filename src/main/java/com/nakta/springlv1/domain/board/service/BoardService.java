@@ -8,7 +8,7 @@ import com.nakta.springlv1.domain.board.repository.BoardLikeRepository;
 import com.nakta.springlv1.domain.board.entity.Board;
 import com.nakta.springlv1.domain.board.repository.BoardRepository;
 import com.nakta.springlv1.domain.user.dto.StringResponseDto;
-import com.nakta.springlv1.domain.user.jwt.UserRoleEnum;
+import com.nakta.springlv1.domain.user.entity.UserRoleEnum;
 import com.nakta.springlv1.global.exception.CustomException;
 import com.nakta.springlv1.global.exception.ErrorCode;
 import com.nakta.springlv1.domain.user.entity.User;

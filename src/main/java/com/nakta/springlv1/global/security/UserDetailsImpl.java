@@ -1,7 +1,7 @@
 package com.nakta.springlv1.global.security;
 
 import com.nakta.springlv1.domain.user.entity.User;
-import com.nakta.springlv1.domain.user.jwt.UserRoleEnum;
+import com.nakta.springlv1.domain.user.entity.UserRoleEnum;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,6 +1,9 @@
-package com.nakta.springlv1.global.security;
+package com.nakta.springlv1.global.config;
 
-import com.nakta.springlv1.domain.user.jwt.JwtUtil;
+import com.nakta.springlv1.global.security.JwtAuthenticationFilter;
+import com.nakta.springlv1.global.security.JwtAuthorizationFilter;
+import com.nakta.springlv1.global.security.JwtUtil;
+import com.nakta.springlv1.global.security.UserDetailsServiceImpl;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,5 +1,6 @@
-package com.nakta.springlv1.domain.user.jwt;
+package com.nakta.springlv1.global.security;
 
+import com.nakta.springlv1.domain.user.entity.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;

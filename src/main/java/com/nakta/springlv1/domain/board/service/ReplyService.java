@@ -10,7 +10,7 @@ import com.nakta.springlv1.domain.board.repository.CommentRepository;
 import com.nakta.springlv1.domain.board.repository.ReplyRepository;
 import com.nakta.springlv1.domain.user.dto.StringResponseDto;
 import com.nakta.springlv1.domain.user.entity.User;
-import com.nakta.springlv1.domain.user.jwt.UserRoleEnum;
+import com.nakta.springlv1.domain.user.entity.UserRoleEnum;
 import com.nakta.springlv1.global.exception.CustomException;
 import com.nakta.springlv1.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;

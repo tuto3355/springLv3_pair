@@ -1,4 +1,4 @@
-package com.nakta.springlv1.domain.user.jwt;
+package com.nakta.springlv1.domain.user.entity;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
