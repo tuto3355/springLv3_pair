@@ -33,76 +33,64 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
-        String accessTokenValue = jwtUtil.getTokenFromRequest(req,"Authorization");
-        if (StringUtils.hasText(accessTokenValue)) {
-            // JWT 토큰 substring
-            accessTokenValue = jwtUtil.substringToken(accessTokenValue);
-            log.info(accessTokenValue);
+        String accessTokenValue = jwtUtil.getTokenFromRequest(req, "Authorization");
+        String refreshTokenValue = jwtUtil.getTokenFromRequest(req, "AuthorizationR");
 
+        if (!StringUtils.hasText(accessTokenValue)) {
+            if (StringUtils.hasText(refreshTokenValue)) {
+                validateRefreshToken(res,refreshTokenValue);
+            }
+        }else {
+            accessTokenValue = jwtUtil.substringToken(accessTokenValue);
             if (!jwtUtil.validateToken(accessTokenValue)) {
-                if (validateRefreshToken(req, res)) {
+                if (StringUtils.hasText(refreshTokenValue)) {
+                    validateRefreshToken(res, refreshTokenValue);
+                } else {
+                    log.error("Token Error");
+                    makeResMessage(res, "토큰 검증 오류 ㅋㅋㅋ");
                     return;
                 }
-                log.error("Token Error");
-
-                res.setContentType("application/json");
-                res.setCharacterEncoding("utf-8");
-                ObjectMapper objectMapper = new ObjectMapper();
-                String result = objectMapper.writeValueAsString(new StringResponseDto("토큰 검증 오류 ㅋㅋㅋ"));
-                res.getWriter().write(result);
-                res.setStatus(400);
-
-                return;
-            }
-
-            Claims info = jwtUtil.getUserInfoFromToken(accessTokenValue);
-
-            try {
-                setAuthentication(info.getSubject());
-            } catch (Exception e) {
-                log.error(e.getMessage());
-
-                //메세지
-                res.setContentType("application/json");
-                res.setCharacterEncoding("utf-8");
-                ObjectMapper objectMapper = new ObjectMapper();
-                String result = objectMapper.writeValueAsString(new StringResponseDto("토큰 인증 오류 ㅋㅋㅋ"));
-                res.getWriter().write(result);
-                res.setStatus(400);
-
-                return;
-            }
-        } else {
-            if (validateRefreshToken(req, res)) {
-                return;
+            } else { //토큰 인증
+                Claims info = jwtUtil.getUserInfoFromToken(accessTokenValue);
+                try {
+                    setAuthentication(info.getSubject());
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    makeResMessage(res, "토큰 인증 오류 ㅋㅋㅋ");
+                    return;
+                }
             }
         }
-
         filterChain.doFilter(req, res);
     }
 
-    public boolean validateRefreshToken(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
-        String refreshTokenValue = jwtUtil.getTokenFromRequest(req,"AuthorizationR");
-        if (StringUtils.hasText(refreshTokenValue)) {
-            refreshTokenValue = jwtUtil.substringToken(refreshTokenValue);
-            log.info(refreshTokenValue);
-            if (jwtUtil.validateToken(refreshTokenValue)) {
-                Claims info = jwtUtil.getUserInfoFromToken(refreshTokenValue);
-                String username = info.getSubject();
-                String authority = info.get("auth", String.class);
-                UserRoleEnum role;
-                if (authority.equals("ADMIN")) {
-                    role = UserRoleEnum.ADMIN;
-                } else {
-                    role = UserRoleEnum.USER;
-                }
 
-                String accessToken = jwtUtil.createToken(username, role,1);
-                jwtUtil.addJwtToCookie(accessToken, res, "Authorization");
-                return true;
+
+    public void validateRefreshToken(HttpServletResponse res, String refreshTokenValue) throws ServletException, IOException {
+
+        refreshTokenValue = jwtUtil.substringToken(refreshTokenValue);
+        log.info(refreshTokenValue);
+        if (jwtUtil.validateToken(refreshTokenValue)) {
+            Claims info = jwtUtil.getUserInfoFromToken(refreshTokenValue);
+            String username = info.getSubject();
+            String authority = info.get("auth", String.class);
+            UserRoleEnum role;
+            if (authority.equals("ADMIN")) {
+                role = UserRoleEnum.ADMIN;
+            } else {
+                role = UserRoleEnum.USER;
             }
+            String accessToken = jwtUtil.createToken(username, role, 1);
+            jwtUtil.addJwtToCookie(accessToken, res, "Authorization");
         }
-        return false;
+        //토큰 인증
+        Claims info = jwtUtil.getUserInfoFromToken(refreshTokenValue);
+        try {
+            setAuthentication(info.getSubject());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            makeResMessage(res, "토큰 인증 오류 ㅋㅋㅋ");
+        }
     }
 
     // 인증 처리
@@ -118,5 +106,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private Authentication createAuthentication(String username) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    }
+
+    private static void makeResMessage(HttpServletResponse res, String msg) throws IOException {
+        res.setContentType("application/json");
+        res.setCharacterEncoding("utf-8");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String result = objectMapper.writeValueAsString(new StringResponseDto(msg));
+        res.getWriter().write(result);
+        res.setStatus(400);
     }
 }
