@@ -50,7 +50,8 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        S3_BUCKET_NAME: elasticbeanstalk-ap-northeast-2-940107362230
       run: |
-        aws s3 cp ./springboot-intro-build.zip s3://springboot-intro-build/ \
+        aws s3 cp ./springboot-intro-build.zip s3://$S3_BUCKET_NAME/ \
           --region ap-northeast-2 \
           --acl private
