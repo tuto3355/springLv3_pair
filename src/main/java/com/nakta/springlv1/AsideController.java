@@ -1,4 +1,4 @@
-package com.nakta.springlv1.domain.board.controller;
+package com.nakta.springlv1;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
