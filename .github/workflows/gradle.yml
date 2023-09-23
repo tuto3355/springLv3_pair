@@ -28,42 +28,10 @@ jobs:
       with:
         java-version: '17'
         distribution: 'adopt'
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
-      with:
-        arguments: build -x test
-# 전송할 파일을 담을 디렉토리 생성
-    - name: Make Directory for deliver
-      run: mkdir deploy
-
-    # Jar 파일 Copy
-    - name: Copy Jar
-      run: cp ./build/libs/*.jar ./deploy/
-
-    # 압축파일 형태로 전달
-    - name: Make zip file
-      run: zip -r -qq -j ./springboot-intro-build.zip ./deploy
-
-    # S3 Bucket으로 copy
-
-    - name: Deliver to AWS S3
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        S3_BUCKET_NAME: elasticbeanstalk-ap-northeast-2-940107362230
-      run: |
-        aws s3 cp ./springboot-intro-build.zip s3://$S3_BUCKET_NAME/ \
-          --region ap-northeast-2 \
-          --acl private
-# Deploy
-    - name: Deploy
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: |
-        aws deploy create-deployment \
-        --application-name springboot-intro \
-        --deployment-group-name springboot-intro-deploy-group \
-        --file-exists-behavior OVERWRITE \
-        --s3-location bucket=springboot-intro-build,key=springboot-intro-build.zip \
-        --region ap-northeast-2
+      # uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      # with:
+        # arguments: build
+      run : ./gradlew clean build
